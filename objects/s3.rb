@@ -27,10 +27,37 @@ require_relative '../version'
 #
 class S3
   def initialize(ocket, bucket, region, key, secret)
-    @object = Aws::S3::Resource.new(
+    @s3 = Aws::S3::Resource.new(
       region: region,
       credentials: Aws::Credentials.new(key, secret)
-    ).bucket(bucket).object(ocket)
+    )
+    @object = @s3.bucket(bucket).object(ocket)
+    @object_weights = nil
+  end
+
+  def set_weights_object(repo_name)
+    bucket = "0pdd-weights/#{repo_name}"
+    @object_weights = @s3.bucket(bucket).object(ocket)
+  end
+
+   def load_weights
+    if !@object_weights.nil?
+      if @object_weights.exists?
+        data = @object_weights.get.body
+        puts "S3 #{data.size} from #{@object_weights.bucket_name}/#{@object_weights.key}"
+        data
+      else
+        puts "Empty wights for #{@object_weights.bucket_name}/#{@object_weights.key}"
+        ''
+      end
+    end
+  end
+
+  def save_weights(weights)
+    if !@object_weights.nil?
+      @object_weights.put(body: weights.to_s)
+      puts "S3 #{data.size} to #{@object_weights.bucket_name}/#{@object_weights.key}"
+    end
   end
 
   def load

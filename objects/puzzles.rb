@@ -29,6 +29,7 @@ class Puzzles
     @storage = storage
     max_issues = repo.config && repo.config['max_issues'].to_i
     @max_issues = max_issues.positive? && max_issues < 100 ? max_issues : 100
+    @storage.set_weights_object(@repo.name)
   end
 
   def deploy(tickets)

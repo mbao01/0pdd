@@ -63,13 +63,39 @@ class NeuralNet
         error = train_on_batch(inputs, expected_outputs)
         
         if log_every && (iteration % log_every == 0)
-          puts "[#{iteration}] #{(error * 100).round(2)}% mse"
+          puts "[#{iteration}] #{(error * 100).round(2)} Kn"
         end
   
         break if error_threshold && (error < error_threshold)
       end
   
       {error: error.round(5), iterations: iteration, below_error_threshold: (error < error_threshold)}
+    end
+
+    def kendal(a, b)
+      a = a.map.with_index.sort.map(&:last)
+      b = b.map.with_index.sort.map(&:last)
+      pairs = a.combination(2) # note that for each of those pairs, the position of
+      # the second element in array `a` is subsequent to the position of the first.
+      # (aka, if a = ['a', 'b', 'c'], value ['c','b'] cannot exist in `pairs`)
+    
+      # due to this observation we only need to index the positions of array `b`
+      rank_b = b.each_with_index.to_h
+    
+      concordant, discordant = 0,0
+      pairs.each do |v1, v2|
+        if !rank_b[v1].nil? && !rank_b[v2].nil?
+          if rank_b[v1] > rank_b[v2]
+            discordant += 1
+          else
+            concordant +=1
+          end
+        end
+      end
+      puts "concordant: #{concordant}, discordant: #{discordant}"
+    
+      n = a.size
+      (concordant - discordant).to_f / (n*(n-1.0)/2.0)
     end
   
     private
@@ -78,13 +104,13 @@ class NeuralNet
         total_mse = 0
   
         set_gradients_to_zeroes
-  
         inputs.each.with_index do |input, i|
           run input
-          training_error = calculate_training_error expected_outputs[i]
-          update_gradients training_error
-          total_mse += mean_squared_error training_error
         end
+
+        training_error = calculate_training_error expected_outputs[i]
+        update_gradients training_error
+        total_mse += mean_squared_error training_error
   
         update_weights
   
@@ -92,9 +118,12 @@ class NeuralNet
       end
   
       def calculate_training_error ideal_output
-        @outputs[output_layer].map.with_index do |output, i| 
-          output - ideal_output[i]
-        end
+        puts @outputs[output_layer].length
+        puts ideal_output
+        puts output_layer
+        c = 1 - kendal(@outputs[output_layer], ideal_output)
+        puts "C: #{c.length}"
+        c
       end
   
       def update_gradients training_error
