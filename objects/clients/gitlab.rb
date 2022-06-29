@@ -27,6 +27,7 @@ require 'gitlab'
 class GitlabClient
   def initialize(config = {})
     @config = config
+    @domain = config['gitlab']['domain']
   end
 
   def client
@@ -36,7 +37,7 @@ class GitlabClient
     else
       token = @config['gitlab']['token'] if @config['gitlab']
       Gitlab.client(
-        endpoint: 'https://gitlab.com/api/v4',
+        endpoint: "#{@domain}/api/v4",
         private_token: token,
         httparty: {
           headers: { 'Cookie' => 'gitlab_canary=true' }

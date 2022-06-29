@@ -105,23 +105,23 @@ class FakeGitlab
   end
 
   def repository_link
-    "https://gitlab.com/#{@repo.name}"
+    "#{@domain}/#{@repo.name}"
   end
 
   def collaborators_link
-    "https://gitlab.com/#{@repo.name}/project_members"
+    "#{@domain}/#{@repo.name}/project_members"
   end
 
   def file_link(file)
-    "https://gitlab.com/#{@repo.name}/blob/#{@repo.master}/#{file})"
+    "#{@domain}/#{@repo.name}/blob/#{@repo.master}/#{file})"
   end
 
   def puzzle_link_for_commit(sha, file, start, stop)
-    "https://gitlab.com/#{@repo.name}/blob/#{sha}/#{file}#L#{start}-L#{stop}"
+    "#{@domain}/#{@repo.name}/blob/#{sha}/#{file}#L#{start}-L#{stop}"
   end
 
   def issue_link(issue_id)
-    "https://gitlab.com/#{@repo.name}/issues/#{issue_id}"
+    "#{@domain}/#{@repo.name}/issues/#{issue_id}"
   end
 
   private

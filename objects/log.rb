@@ -35,7 +35,7 @@ class Log
     @vcs = (vcs || 'github').downcase
     @repo = @vcs == 'github' ? repo : Base64.encode64(repo + @vcs).gsub(%r{[\s=/]+}, '')
 
-    raise 'You need to specify your cloud VCS' unless ['github'].include?(@vcs)
+    raise 'You need to specify your cloud VCS' unless ['github', 'gitlab'].include?(@vcs)
   end
 
   def put(tag, text)

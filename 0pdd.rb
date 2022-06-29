@@ -78,6 +78,7 @@ configure do
       },
       'gitlab' => {
         'token' => '--the-token--',
+        'domain' => 'https://codehub-g.huawei.com',
         'client_id' => '?',
         'client_secret' => '?'
       },
@@ -239,6 +240,7 @@ get '/snapshot' do
   name = repo_name(params[:name])
   uri = "git@github.com:#{name}.git"
   uri = "git@gitlab.com:#{name}.git" if vcs == 'gitlab'
+  uri = "git@codehub-g.huawei.com:#{name}.git" if vcs == 'codehub'
   begin
     repo = GitRepo.new(
       uri: uri,
