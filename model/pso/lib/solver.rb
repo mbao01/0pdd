@@ -1,3 +1,23 @@
+# Copyright (c) 2016-2022 Yegor Bugayenko
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the 'Software'), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 require_relative './zero_vector'
 require_relative './functions/rastrigin'
 
@@ -39,7 +59,7 @@ module Pso
     end
 
     def generate_random_noise_particle
-      @center.map { rand * 2 - 1 }
+      @center.map { (rand * 2) - 1 }
     end
 
     def generate_random_particle
@@ -100,13 +120,13 @@ module Pso
     def interate(vector, best, perfect, speed)
       if vector == perfect
         out = generate_random_noise_particle
-        new_vec = vector + (best - vector).normalize * 0.2 + out * rand * 0.05 + speed * 0.05
+        new_vec = vector + ((best - vector).normalize * 0.2) + (out * rand * 0.05) + (speed * 0.05)
         minimal = @f.f(vector, **@options) > @f.f(new_vec, **@options)
         return minimal ? new_vec : vector if @method == :min_by
         return minimal ? vector : new_vec unless @method == :min_by
       end
       out = generate_random_noise_particle
-      vector + out * rand * 0.1 + (best - vector).normalize * 0.5 + (perfect - vector).normalize + speed
+      vector + (out * rand * 0.1) + ((best - vector).normalize * 0.5) + (perfect - vector).normalize + speed
     end
   end
 end

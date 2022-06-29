@@ -33,6 +33,7 @@ require_relative 'user_error'
 #
 class GitRepo
   attr_reader :uri, :name, :path, :master, :head_commit_hash
+
   def initialize(
     uri:,
     name:,
@@ -40,7 +41,7 @@ class GitRepo
     head_commit_hash: '',
     **options
   )
-    @id = Base64.encode64(uri).gsub(%r{[\s=\/]+}, '')
+    @id = Base64.encode64(uri).gsub(%r{[\s=/]+}, '')
     @name = name
     @dir = options[:dir] || Dir.mktmpdir('0pdd')
     @path = "#{@dir}/#{@id}"
@@ -114,7 +115,7 @@ class GitRepo
     dir = "#{Dir.home}/.ssh"
     return if File.exist?(dir)
     FileUtils.mkdir_p(dir)
-    IO.write("#{dir}/id_rsa", @id_rsa) unless @id_rsa.empty?
+    File.write("#{dir}/id_rsa", @id_rsa) unless @id_rsa.empty?
     Exec.new(
       [
         'echo "Host *" > ~/.ssh/config',
