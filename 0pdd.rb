@@ -107,6 +107,7 @@ configure do
       c.release = VERSION
     end
   end
+  set :bind, '0.0.0.0'
   set :config, config
   if config['smtp']
     Mail.defaults do
@@ -366,9 +367,11 @@ get '/hook/gitlab' do
 end
 
 post '/hook/gitlab' do
-  is_from_gitlab = request.env['HTTP_USER_AGENT'].start_with?('GitLab')
-  is_push_event = request.env['HTTP_X_GITLAB_EVENT'] == 'Push Hook'
-  unless is_from_gitlab && is_push_event
+  is_push_event = [
+    request.env['HTTP_X_GITLAB_EVENT'],
+    request.env['HTTP_X_CODEHUB_EVENT']
+  ].includes('Push Hook')
+  unless is_push_event
     return [
       400,
       'Please, only register push events from Gitlab webhook'
