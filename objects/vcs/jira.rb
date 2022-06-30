@@ -80,8 +80,6 @@ class JiraRepo
 
   def repository(name = nil)
     @client.Project.find(name)
-  rescue JIRA::NotFound => e
-    raise "Repository #{name} is not available: #{e.message}"
   end
 
   def repository_link
