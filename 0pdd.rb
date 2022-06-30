@@ -66,6 +66,8 @@ require_relative 'objects/invitations/github_invitations'
 
 require_relative 'test/fake_storage'
 
+ENV['RACK_ENV'] = 'test'
+
 configure do
   Haml::Options.defaults[:format] = :xhtml
   config = if ENV['RACK_ENV'] == 'test'
@@ -107,6 +109,7 @@ configure do
       c.release = VERSION
     end
   end
+  set :port, 8081
   set :bind, '0.0.0.0'
   set :config, config
   if config['smtp']
@@ -370,7 +373,7 @@ post '/hook/gitlab' do
   is_push_event = [
     request.env['HTTP_X_GITLAB_EVENT'],
     request.env['HTTP_X_CODEHUB_EVENT']
-  ].includes('Push Hook')
+  ].include?('Push Hook')
   unless is_push_event
     return [
       400,
@@ -390,7 +393,7 @@ post '/hook/gitlab' do
   )
   gitlab = GitlabRepo.new(settings.gitlab, json, settings.config)
   return 'Thanks' unless gitlab.is_valid
-  unless ENV['RACK_ENV'] == 'test'
+  unless ENV['RACK_ENV'] != 'test'
     process_request(gitlab)
     puts "Gitlab hook from #{gitlab.repo.name}"
   end
