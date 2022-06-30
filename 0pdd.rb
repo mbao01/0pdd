@@ -393,7 +393,7 @@ post '/hook/gitlab' do
   )
   gitlab = GitlabRepo.new(settings.gitlab, json, settings.config)
   return 'Thanks' unless gitlab.is_valid
-  unless ENV['RACK_ENV'] != 'test'
+  unless ENV['RACK_ENV'] == 'test'
     process_request(gitlab)
     puts "Gitlab hook from #{gitlab.repo.name}"
   end
