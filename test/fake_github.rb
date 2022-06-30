@@ -181,6 +181,10 @@ class FakeGithub
     "https://github.com/#{@repo.name}/blob/#{sha}/#{file}#L#{start}-L#{stop}"
   end
 
+  def commit_link(sha)
+    "https://github.com/#{@repo.name}/commit/#{sha}"
+  end
+
   def issue_link(issue_id)
     "https://github.com/#{@repo.name}/issues/#{issue_id}"
   end

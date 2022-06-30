@@ -108,12 +108,18 @@ class Tickets
     file = puzzle.xpath('file')[0].text
     start, stop = puzzle.xpath('lines')[0].text.split('-')
     sha = @vcs.repo.head_commit_hash || vcs.repo.master
-    url = @vcs.puzzle_link_for_commit(sha, file, start, stop)
+    puzzle_url = @vcs.puzzle_link_for_commit(sha, file, start, stop)
+    commit_url = @vcs.commit_link(sha)
+    parent_issue_link = @vcs.issue_link(puzzle.xpath('ticket')[0].text)
     template = File.read(
       File.join(File.dirname(__FILE__), "../templates/#{@vcs.name.downcase}_tickets_body.haml")
     )
     Haml::Engine.new(template).render(
-      Object.new, url: url, puzzle: puzzle
+      Object.new,
+      puzzle: puzzle,
+      commit_url: commit_url,
+      puzzle_url: puzzle_url,
+      parent_issue_link: parent_issue_link
     )
   end
 end

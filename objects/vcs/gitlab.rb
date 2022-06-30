@@ -168,6 +168,10 @@ class GitlabRepo
     "#{@domain}/#{@repo.name}/blob/#{sha}/#{file}#L#{start}-L#{stop}"
   end
 
+  def commit_link(sha)
+    "#{@domain}/#{@repo.name}/commit/#{sha}"
+  end
+
   def issue_link(issue_id)
     "#{@domain}/#{@repo.name}/issues/#{issue_id}"
   end

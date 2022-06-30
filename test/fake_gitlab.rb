@@ -25,6 +25,7 @@ class FakeGitlab
     @name = 'GITLAB'
     @repositories = options[:repositories] || []
     @repo = options[:repo]
+    @domain = 'https://gitlab.com'
   end
 
   def repositories(user = nil, _options = {})
@@ -118,6 +119,10 @@ class FakeGitlab
 
   def puzzle_link_for_commit(sha, file, start, stop)
     "#{@domain}/#{@repo.name}/blob/#{sha}/#{file}#L#{start}-L#{stop}"
+  end
+
+  def commit_link(sha)
+    "#{@domain}/#{@repo.name}/commit/#{sha}"
   end
 
   def issue_link(issue_id)

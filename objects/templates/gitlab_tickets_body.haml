@@ -1,7 +1,9 @@
 The puzzle `#{puzzle.xpath('id')[0].text}` |
-from ##{puzzle.xpath('ticket')[0].text} has to be resolved: |
+from [##{puzzle.xpath('ticket')[0].text}](parent_issue_link) has to be resolved: |
 \
-#{url}
+#{puzzle.xpath('id')[0].text}
+\
+See [Commit](#{commit_url}) or [puzzle in code](#{puzzle_url})
 \
 The puzzle was created by #{puzzle.xpath('author')[0].text} on |
 #{Time.parse(puzzle.xpath('time')[0].text).strftime('%d-%b-%y')}. |
