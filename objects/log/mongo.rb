@@ -20,7 +20,6 @@
 
 require 'base64'
 require 'nokogiri'
-require_relative 'mongo'
 require_relative '../../version'
 
 #
@@ -35,13 +34,14 @@ class MongoLog
   end
 
   def put(tag, text)
-    @collection.insert_one({
+    doc = {
       repo: @repo,
       vcs: @vcs,
       time: Time.now.to_i,
       tag: tag,
       text: "#{text} /#{VERSION}"
-    })
+    }
+    @collection.insert_one(doc)
   end
 
   def get(tag)
@@ -49,7 +49,7 @@ class MongoLog
   end
 
   def exists(tag)
-    !@collection.find({ repo: @repo, tag: tag }).map{ |doc| Hash[doc] }.empty?
+    !@collection.find({ repo: @repo, tag: tag }).map(&:to_h).empty?
   end
 
   def delete(time, tag)
@@ -59,6 +59,6 @@ class MongoLog
   end
 
   def list(since = Time.now.to_i)
-    @collection.find({ repo: @repo, time: { "$lte": since }}).limit(25)
+    @collection.find({ repo: @repo, time: { '$lte': since } }).limit(25)
   end
 end

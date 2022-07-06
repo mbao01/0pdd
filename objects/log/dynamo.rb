@@ -21,7 +21,6 @@
 require 'base64'
 require 'nokogiri'
 require 'aws-sdk-dynamodb'
-require_relative 'dynamo'
 require_relative '../../version'
 
 #

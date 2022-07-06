@@ -32,9 +32,10 @@ class Log
     #  different vcs have the same <user/repo_name>. This will cause a conflict.
     @vcs = (vcs || 'github').downcase
     @repo = @vcs == 'github' ? repo : Base64.encode64(repo + @vcs).gsub(%r{[\s=/]+}, '')
-    raise 'You need to specify your cloud VCS' unless ['github', 'gitlab', 'codehub'].include?(@vcs)
-    @db = client
-    unless client
+    raise 'You need to specify your cloud VCS' unless %w[github gitlab codehub].include?(@vcs)
+    if client
+      @db = client
+    else
       @db = DynamoLog.new(@repo, @vcs) if @vcs == 'github'
       @db = MongoLog.new(@repo, @vcs) unless @vcs == 'github'
     end

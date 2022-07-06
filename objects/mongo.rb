@@ -26,13 +26,15 @@ require 'mongo'
 #
 class MongoClient
   attr_reader :name
+
   def initialize(config = {})
     @name = 'MONGO'
     @config = config
   end
 
   def client
-    Mongo::Client.new([@config['mongo']['url']],
+    Mongo::Client.new(
+      [@config['mongo']['url']],
       app_name: '0pdd-mongodb',
       user: @config['mongo']['username'],
       password: @config['mongo']['password'],
