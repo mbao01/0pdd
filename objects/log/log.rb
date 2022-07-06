@@ -31,7 +31,7 @@ class Log
     # @todo #312:30min Be sure to handle the use case where projects from
     #  different vcs have the same <user/repo_name>. This will cause a conflict.
     @vcs = (vcs || 'github').downcase
-    @repo = @vcs == 'github' ? repo : Base64.encode64(repo + @vcs).gsub(%r{[\s=/]+}, '')
+    @repo = repo
     raise 'You need to specify your cloud VCS' unless %w[github gitlab codehub].include?(@vcs)
     if client
       @db = client

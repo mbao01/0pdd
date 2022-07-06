@@ -45,20 +45,20 @@ class MongoLog
   end
 
   def get(tag)
-    @collection.find({ repo: @repo, tag: tag }).first
+    @collection.find({ repo: @repo, vcs: @vcs, tag: tag }).first
   end
 
   def exists(tag)
-    !@collection.find({ repo: @repo, tag: tag }).map(&:to_h).empty?
+    !@collection.find({ repo: @repo, vcs: @vcs, tag: tag }).map(&:to_h).empty?
   end
 
   def delete(time, tag)
-    doc = { repo: @repo, time: time }
+    doc = { repo: @repo, vcs: @vcs, time: time }
     doc = doc.merge({ tag: @tag }) if tag
     @collection.delete_one(doc)
   end
 
   def list(since = Time.now.to_i)
-    @collection.find({ repo: @repo, time: { '$lte': since } }).limit(25)
+    @collection.find({ repo: @repo, vcs: @vcs, time: { '$lte': since } }).limit(25)
   end
 end
