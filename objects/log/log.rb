@@ -22,7 +22,6 @@ require 'base64'
 require 'nokogiri'
 require_relative 'mongo'
 require_relative 'dynamo'
-require_relative '../version'
 
 #
 # Log.

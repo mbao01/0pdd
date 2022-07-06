@@ -21,7 +21,7 @@
 require 'base64'
 require 'nokogiri'
 require_relative 'mongo'
-require_relative '../version'
+require_relative '../../version'
 
 #
 # Mongo Log.
