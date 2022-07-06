@@ -32,14 +32,14 @@ require_relative '../objects/dynamo'
 # License:: MIT
 class TestLog < Test::Unit::TestCase
   def test_put_and_check_mongo
-    log = Log.new(MongoClient.new.client, 'yegor256/0pdd')
+    log = Log.new('yegor256/0pdd', 'gitlab')
     tag = 'some-tag'
     log.put(tag, 'some text here')
     assert(log.exists(tag))
   end
 
   def test_put_and_check_dynamo
-    log = Log.new(Dynamo.new.aws, 'yegor256/0pdd')
+    log = Log.new('yegor256/0pdd')
     tag = 'some-tag'
     log.put(tag, 'some text here')
     assert(log.exists(tag))

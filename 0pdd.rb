@@ -33,8 +33,8 @@ require 'tmpdir'
 require 'glogin'
 
 require_relative 'version'
-require_relative 'objects/log'
-require_relative 'objects/dynamo'
+require_relative 'objects/log/log'
+require_relative 'objects/mongo'
 require_relative 'objects/git_repo'
 require_relative 'objects/user_error'
 require_relative 'objects/vcs/github'
@@ -66,8 +66,6 @@ require_relative 'objects/invitations/github_invitations'
 
 require_relative 'test/fake_storage'
 
-ENV['RACK_ENV'] = 'test'
-
 configure do
   Haml::Options.defaults[:format] = :xhtml
   config = if ENV['RACK_ENV'] == 'test'
@@ -95,6 +93,12 @@ configure do
         'bucket' => '?',
         'key' => '?',
         'secret' => '?'
+      },
+      'mongo' => {
+        'url' => '127.0.0.1:27017',
+        'username' => nil,
+        'password' => nil,
+        'database' => 'test'
       },
       'id_rsa' => ''
     }
@@ -128,6 +132,7 @@ configure do
   set :server_settings, timeout: 25
   set :github, Github.new(config).client
   set :gitlab, GitlabClient.new(config).client
+  set :mongo, MongoClient.new(config).client
   set :dynamo, Dynamo.new(config).aws
   set :glogin, GLogin::Auth.new(
     config['github']['client_id'],
@@ -232,7 +237,7 @@ get '/log' do
   haml :log, layout: :layout, locals: merged(
     title: repo,
     repo: repo,
-    log: Log.new(settings.dynamo, repo, vcs),
+    log: Log.new(repo, vcs),
     since: params[:since] ? params[:since].to_i : Time.now.to_i + 1
   )
 end
@@ -267,7 +272,7 @@ get '/log-item' do
   repo = repo_name(params[:repo])
   tag = params[:tag]
   error 404 if tag.nil?
-  log = Log.new(settings.dynamo, repo, vcs)
+  log = Log.new(repo, vcs)
   error 404 unless log.exists(tag)
   haml :item, layout: :layout, locals: merged(
     title: tag,
@@ -280,7 +285,7 @@ get '/log-delete' do
   redirect '/' if @locals[:user].nil? || @locals[:user][:login] != 'yegor256'
   repo = repo_name(params[:name])
   vcs = vcs_name(params[:vcs])
-  Log.new(settings.dynamo, repo, vcs).delete(params[:time].to_i, params[:tag])
+  Log.new(repo, vcs).delete(params[:time].to_i, params[:tag])
   redirect "/log?name=#{repo}"
 end
 
@@ -469,7 +474,7 @@ def storage(repo, vcs)
                     settings.config['s3']['key'],
                     settings.config['s3']['secret']
                   ),
-                  Log.new(settings.dynamo, repo, vcs)
+                  Log.new(repo, vcs)
                 )
               end,
               VERSION
@@ -506,7 +511,7 @@ def process_request(vcs)
                       vcs,
                       LoggedTickets.new(
                         vcs,
-                        Log.new(settings.dynamo, vcs.repo.name, vcs.name),
+                        Log.new(vcs.repo.name, vcs.name),
                         MilestoneTickets.new(
                           vcs,
                           Tickets.new(vcs)

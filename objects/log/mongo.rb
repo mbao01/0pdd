@@ -27,7 +27,8 @@ require_relative '../version'
 # Mongo Log.
 #
 class MongoLog
-  def initialize(mongo, repo, vcs)
+  def initialize(repo, vcs)
+    mongo = Sinatra::Application.settings.mongo
     @collection = mongo[:zeropddevents]
     @repo = repo
     @vcs = vcs

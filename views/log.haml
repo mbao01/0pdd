@@ -9,8 +9,7 @@
 %p
   Since
   = Time.at(since).iso8601
-- log_list = log.list(since)
-- events = log_list.items
+- events = log.list(since)
 - if events.empty?
   %p
     There are no events yet.
@@ -25,7 +24,7 @@
       - if defined?(user) && user[:login] == 'yegor256'
         %a{href:url("/log-delete?name=#{repo}&time=#{e['time'].to_i}&tag=#{e['tag']}"), onclick: "return confirm('You are going to delete the \"#{e['tag']}\" event. Normally you should not do this. Are you sure?')"}
           delete
-  - unless log_list.last_evaluated_key.nil?
+  - unless events.last_evaluated_key.nil?
     %p
       %a{href:url("/log?name=#{repo}&since=#{next_page}")}
         = 'more'

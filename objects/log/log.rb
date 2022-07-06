@@ -20,23 +20,25 @@
 
 require 'base64'
 require 'nokogiri'
-require_relative '../version'
 require_relative 'mongo'
 require_relative 'dynamo'
+require_relative '../version'
 
 #
 # Log.
 #
 class Log
-  def initialize(client, repo, vcs = 'github')
+  def initialize(repo, vcs = 'github', client = nil)
     # @todo #312:30min Be sure to handle the use case where projects from
     #  different vcs have the same <user/repo_name>. This will cause a conflict.
     @vcs = (vcs || 'github').downcase
     @repo = @vcs == 'github' ? repo : Base64.encode64(repo + @vcs).gsub(%r{[\s=/]+}, '')
-    raise 'You need to specify your cloud VCS' unless ['github', 'gitlab'].include?(@vcs)
-
-    @db = MongoLog.new(client, @repo, @vcs) if client.name == 'MONGO'
-    @db = DynamoLog.new(client, @repo, @vcs) unless client.name == 'MONGO'
+    raise 'You need to specify your cloud VCS' unless ['github', 'gitlab', 'codehub'].include?(@vcs)
+    @db = client
+    unless client
+      @db = DynamoLog.new(@repo, @vcs) if @vcs == 'github'
+      @db = MongoLog.new(@repo, @vcs) unless @vcs == 'github'
+    end
   end
 
   def put(tag, text)

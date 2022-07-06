@@ -55,7 +55,7 @@ class AppTest < Test::Unit::TestCase
 
   def test_renders_log_page
     repo = 'yegor256/0pdd'
-    log = Log.new(MongoClient.new.client, repo)
+    log = Log.new(repo)
     log.put('some-tag', 'some text here')
     get("/log?name=#{repo}")
     assert(last_response.ok?, last_response.body)
@@ -65,7 +65,7 @@ class AppTest < Test::Unit::TestCase
 
   def test_renders_log_item
     repo = 'yegor256/0pdd'
-    log = Log.new(Dynamo.new.aws, repo)
+    log = Log.new(repo)
     tag = 'some-tag'
     log.put(tag, 'some text here')
     get("/log-item?repo=#{repo}&tag=#{tag}")

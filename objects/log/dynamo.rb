@@ -28,8 +28,8 @@ require_relative '../version'
 # Dynamo Log.
 #
 class DynamoLog
-  def initialize(dynamo, repo, vcs)
-    @dynamo = dynamo
+  def initialize(repo, vcs)
+    @dynamo = Sinatra::Application.settings.dynamo
     @repo = repo
     @vcs = vcs
   end
