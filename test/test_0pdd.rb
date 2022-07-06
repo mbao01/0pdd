@@ -55,7 +55,7 @@ class AppTest < Test::Unit::TestCase
 
   def test_renders_log_page
     repo = 'yegor256/0pdd'
-    log = Log.new(Dynamo.new.aws, repo)
+    log = Log.new(MongoClient.new.client, repo)
     log.put('some-tag', 'some text here')
     get("/log?name=#{repo}")
     assert(last_response.ok?, last_response.body)

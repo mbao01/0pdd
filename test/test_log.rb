@@ -23,6 +23,7 @@ require 'test/unit'
 require 'tmpdir'
 require_relative 'test__helper'
 require_relative '../objects/log'
+require_relative '../objects/mongo'
 require_relative '../objects/dynamo'
 
 # Log test.
@@ -30,7 +31,14 @@ require_relative '../objects/dynamo'
 # Copyright:: Copyright (c) 2016-2022 Yegor Bugayenko
 # License:: MIT
 class TestLog < Test::Unit::TestCase
-  def test_put_and_check
+  def test_put_and_check_mongo
+    log = Log.new(MongoClient.new.client, 'yegor256/0pdd')
+    tag = 'some-tag'
+    log.put(tag, 'some text here')
+    assert(log.exists(tag))
+  end
+
+  def test_put_and_check_dynamo
     log = Log.new(Dynamo.new.aws, 'yegor256/0pdd')
     tag = 'some-tag'
     log.put(tag, 'some text here')

@@ -27,6 +27,7 @@ require 'aws-sdk-dynamodb'
 require_relative 'test__helper'
 require_relative '../objects/storage/s3'
 require_relative '../objects/tickets/tickets'
+require_relative '../objects/mongo'
 require_relative '../objects/log'
 require_relative '../objects/vcs/github'
 require_relative '../objects/git_repo'
@@ -54,6 +55,12 @@ class CredentialsTest < Test::Unit::TestCase
       secret_access_key: cfg['dynamo']['secret']
     )
     assert(!Log.new(dynamo, 'yegor256/0pdd').exists('some stupid tag'))
+  end
+
+  def test_connects_to_mongo
+    cfg = config
+    mongo = MongoClient.new(cfg)
+    assert(!Log.new(mongo, 'yegor256/0pdd').exists('some stupid tag'))
   end
 
   def test_connects_to_github
