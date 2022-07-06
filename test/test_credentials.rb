@@ -28,7 +28,7 @@ require_relative 'test__helper'
 require_relative '../objects/storage/s3'
 require_relative '../objects/tickets/tickets'
 require_relative '../objects/mongo'
-require_relative '../objects/log'
+require_relative '../objects/log/log'
 require_relative '../objects/vcs/github'
 require_relative '../objects/git_repo'
 

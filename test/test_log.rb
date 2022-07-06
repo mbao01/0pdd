@@ -22,7 +22,7 @@ require 'nokogiri'
 require 'test/unit'
 require 'tmpdir'
 require_relative 'test__helper'
-require_relative '../objects/log'
+require_relative '../objects/log/log'
 require_relative '../objects/mongo'
 require_relative '../objects/dynamo'
 
