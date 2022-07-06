@@ -1,0 +1,63 @@
+# Copyright (c) 2016-2022 Yegor Bugayenko
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the 'Software'), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+require 'base64'
+require 'nokogiri'
+require_relative 'mongo'
+require_relative '../version'
+
+#
+# Mongo Log.
+#
+class MongoLog
+  def initialize(mongo, repo, vcs)
+    @collection = mongo[:zeropddevents]
+    @repo = repo
+    @vcs = vcs
+  end
+
+  def put(tag, text)
+    @collection.insert_one({
+      repo: @repo,
+      vcs: @vcs,
+      time: Time.now.to_i,
+      tag: tag,
+      text: "#{text} /#{VERSION}"
+    })
+  end
+
+  def get(tag)
+    @collection.find({ repo: @repo, tag: tag }).first
+  end
+
+  def exists(tag)
+    !@collection.find({ repo: @repo, tag: tag }).map{ |doc| Hash[doc] }.empty?
+  end
+
+  def delete(time, tag)
+    doc = { repo: @repo, time: time }
+    doc = doc.merge({ tag: @tag }) if tag
+    @collection.delete_one(doc)
+  end
+
+  def list(since = Time.now.to_i)
+    @collection.find({ repo: @repo, time: { "$lte": since }}).limit(25)
+  end
+end
