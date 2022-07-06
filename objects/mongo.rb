@@ -25,7 +25,9 @@ require 'mongo'
 # Mongo client
 #
 class MongoClient
+  attr_reader :name
   def initialize(config = {})
+    @name = 'MONGO'
     @config = config
   end
 

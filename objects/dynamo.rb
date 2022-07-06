@@ -25,7 +25,9 @@ require 'aws-sdk-dynamodb'
 # Dynamo client
 #
 class Dynamo
+  attr_reader :name
   def initialize(config = {})
+    @name = 'DYNAMO'
     @config = config
   end
 
