@@ -31,6 +31,7 @@ gem 'haml', '5.2.2'
 gem 'jira-ruby', '2.2.0'
 gem 'mail', '2.7.1'
 gem 'mocha', '1.14.0', require: false
+gem 'mongo', '2.2.5'
 gem 'nokogiri', '1.13.6'
 gem 'octokit', '4.25.0'
 gem 'pdd', '0.21.0'
