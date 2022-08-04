@@ -1,0 +1,20 @@
+testing: true
+github:
+  token: "--the-token--"
+  client_id: "?"
+  client_secret: "?"
+gitlab:
+  token: ""
+  domain: "https://codehub-g.huawei.com"
+  client_id: "?"
+  client_secret: "?"
+sentry: ""
+s3:
+  region: "?"
+  bucket: "?"
+  key: "?"
+  secret: "?"
+id_rsa: ""
+dynamo:
+  region: "eu-west-2"
+

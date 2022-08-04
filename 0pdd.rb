@@ -67,18 +67,20 @@ require_relative 'objects/invitations/github_invitations'
 
 require_relative 'test/fake_storage'
 
+ENV['RACK_ENV'] = 'test'
+
 configure do
   Haml::Options.defaults[:format] = :xhtml
   config = if ENV['RACK_ENV'] == 'test'
     {
-      'testing' => true,
+      'testing' => false,
       'github' => {
         'token' => '--the-token--',
         'client_id' => '?',
         'client_secret' => '?'
       },
       'gitlab' => {
-        'token' => '--the-token--',
+        'token' => '',
         'domain' => 'https://codehub-g.huawei.com',
         'client_id' => '?',
         'client_secret' => '?'
@@ -96,10 +98,10 @@ configure do
         'secret' => '?'
       },
       'mongo' => {
-        'url' => '127.0.0.1:27017',
-        'username' => nil,
-        'password' => nil,
-        'database' => 'test'
+        'url' => '',
+        'username' => '',
+        'password' => '',
+        'database' => ''
       },
       'id_rsa' => ''
     }
@@ -397,7 +399,7 @@ post '/hook/gitlab' do
     end
   )
   gitlab = GitlabRepo.new(settings.gitlab, json, settings.config)
-  unless ENV['RACK_ENV'] == 'test'
+  unless ENV['RACK_ENV'] != 'test'
     process_request(gitlab)
     puts "Gitlab hook from #{gitlab.repo.name}"
   end
